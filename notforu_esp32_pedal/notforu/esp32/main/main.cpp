@@ -1,3 +1,9 @@
+// TODO
+// CHOOSE THE RIGHT GPIO and update
+// CHECK IP ADDRESS...
+// SEND TO PD
+// KEEP MIDI UART
+
 #include <ableton/Link.hpp>
 #include <driver/gpio.h>
 #include <driver/timer.h>
@@ -5,13 +11,14 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/semphr.h>
 #include <freertos/task.h>
+#include "freertos/queue.h"
 #include <nvs_flash.h>
 #include <protocol_examples_common.h>
 #include "driver/uart.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include "esp_timer.h"
 #include "esp_sleep.h"
-
 
 // UPD
 #include <string.h>
@@ -63,19 +70,18 @@ double prev_beat_time;
 
 // gpio
 extern "C" {
-  #include "freertos/queue.h"
-  #include <string.h>
-  #include <stdlib.h>
-
+  
   // BUTTONS
   #define GPIO_INPUT_IO_0     GPIO_NUM_23
   #define GPIO_INPUT_IO_1     GPIO_NUM_1
   #define GPIO_INPUT_PIN_SEL  ((1ULL<<GPIO_INPUT_IO_0) | (1ULL<<GPIO_INPUT_IO_1))
 
-  // BUTTONS LED
+  // LEDS
   #define GPIO_OUTPUT_IO_0    GPIO_NUM_18
   #define GPIO_OUTPUT_IO_1    GPIO_NUM_19
-  #define GPIO_OUTPUT_PIN_SEL  ((1ULL<<GPIO_OUTPUT_IO_0) | (1ULL<<GPIO_OUTPUT_IO_1))
+  #define GPIO_OUTPUT_IO_2    GPIO_NUM_17
+  #define GPIO_OUTPUT_IO_3    GPIO_NUM_16
+  #define GPIO_OUTPUT_PIN_SEL  ((1ULL<<GPIO_OUTPUT_IO_0) | (1ULL<<GPIO_OUTPUT_IO_1) | (1ULL<<GPIO_OUTPUT_IO_2) | (1ULL<<GPIO_OUTPUT_IO_3))
   #define ESP_INTR_FLAG_DEFAULT 0
 
   static xQueueHandle gpio_evt_queue = NULL;
@@ -92,14 +98,13 @@ extern "C" {
       for(;;) {
           if(xQueueReceive(gpio_evt_queue, &io_num, portMAX_DELAY)) {
               
+              // check gpio_input for low
+              // debounce in pd...
               if(io_num == GPIO_NUM_23 && gpio_get_level((gpio_num_t)io_num) == 0) {
                 payload = "23";
-                //gpio_set_level(GPIO_OUTPUT_IO_0, 1);
               } else if(io_num == GPIO_NUM_1 && gpio_get_level((gpio_num_t)io_num) == 0) {
                 payload = "1";
-                //gpio_set_level(GPIO_OUTPUT_IO_0, 0);
               }
-//              gpio_set_level(GPIO_OUTPUT_IO_0, gpio_get_level((gpio_num_t)io_num));
 
               int err = sendto(sock, payload, strlen(payload), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
                   if (err < 0) {
@@ -216,9 +221,6 @@ void tickTask(void* userParam)
     const auto phase = state.phaseAtTime(link.clock().micros(), 0.25);
     gpio_set_level(LED, fmodf(phase, 1.) < 0.1);
    
-
-
-
     curr_beat_time = state.beatAtTime(link.clock().micros(), 4);
     const double curr_phase = fmod(curr_beat_time, 4);
     if (curr_beat_time > prev_beat_time) {
@@ -226,23 +228,42 @@ void tickTask(void* userParam)
       const double prev_step = floor(prev_phase * 1);
       const double curr_step = floor(curr_phase * 1);
       if (prev_phase - curr_phase > 4 / 2 || prev_step != curr_step) {
-        if(curr_step ==0) {
-          gpio_set_level(GPIO_OUTPUT_IO_0, 1);
-        } else {
-          gpio_set_level(GPIO_OUTPUT_IO_0, 0);
+        
+        // only if playing
+        if(startStopCB) {
+        // show step with leds
+          if(curr_step == 0) {
+            gpio_set_level(GPIO_OUTPUT_IO_0, 1);
+          } else {
+            gpio_set_level(GPIO_OUTPUT_IO_0, 0);
+          }
+          if(curr_step == 1) {
+            gpio_set_level(GPIO_OUTPUT_IO_1, 1);
+          } else {
+            gpio_set_level(GPIO_OUTPUT_IO_1, 0);
+          }
+          if(curr_step == 2) {
+            gpio_set_level(GPIO_OUTPUT_IO_2, 1);
+          } else {
+            gpio_set_level(GPIO_OUTPUT_IO_2, 0);
+          }
+          if(curr_step == 3) {
+            gpio_set_level(GPIO_OUTPUT_IO_3, 1);
+          } else {
+            gpio_set_level(GPIO_OUTPUT_IO_3, 0);
+          }
         }
+
         if(curr_step == 0 && startStopState != startStopCB) {
-              if(startStopCB) {
-                char zedata[] = { MIDI_START };
-                uart_write_bytes(UART_NUM_1, zedata, 1);
-                uart_write_bytes(UART_NUM_1, 0, 1);
-              } else {
-                char zedata[] = { MIDI_STOP };
-                uart_write_bytes(UART_NUM_1, zedata, 1);
-                uart_write_bytes(UART_NUM_1, 0, 1);
-              }
-              startStopState = startStopCB;
+          char zedata[] = { MIDI_START };
+          uart_write_bytes(UART_NUM_1, zedata, 1);
+          uart_write_bytes(UART_NUM_1, 0, 1);
+        } else {
+          char zedata[] = { MIDI_STOP };
+          uart_write_bytes(UART_NUM_1, zedata, 1);
+          uart_write_bytes(UART_NUM_1, 0, 1);
         }
+        startStopState = startStopCB;
         
       }
     }
