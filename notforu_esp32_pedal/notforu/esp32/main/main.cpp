@@ -72,15 +72,25 @@ double prev_beat_time;
 extern "C" {
   
   // BUTTONS
-  #define GPIO_INPUT_IO_0     GPIO_NUM_23
-  #define GPIO_INPUT_IO_1     GPIO_NUM_1
-  #define GPIO_INPUT_PIN_SEL  ((1ULL<<GPIO_INPUT_IO_0) | (1ULL<<GPIO_INPUT_IO_1))
+  #define GPIO_INPUT_IO_0     GPIO_NUM_36
+  #define GPIO_INPUT_IO_1     GPIO_NUM_39
+  #define GPIO_INPUT_IO_2     GPIO_NUM_34
+  #define GPIO_INPUT_IO_3     GPIO_NUM_35
+  #define GPIO_INPUT_IO_4     GPIO_NUM_32
+  #define GPIO_INPUT_IO_5     GPIO_NUM_33
+  #define GPIO_INPUT_IO_6     GPIO_NUM_25
+  #define GPIO_INPUT_IO_7     GPIO_NUM_26
+  #define GPIO_INPUT_IO_8     GPIO_NUM_27
+  #define GPIO_INPUT_IO_9     GPIO_NUM_14
+  
+  #define GPIO_INPUT_PIN_SEL  ((1ULL<<GPIO_INPUT_IO_0) | (1ULL<<GPIO_INPUT_IO_1) | (1ULL<<GPIO_INPUT_IO_2) | (1ULL<<GPIO_INPUT_IO_3) | (1ULL<<GPIO_INPUT_IO_4) | (1ULL<<GPIO_INPUT_IO_5) | (1ULL<<GPIO_INPUT_IO_6) | (1ULL<<GPIO_INPUT_IO_7) | (1ULL<<GPIO_INPUT_IO_8) | (1ULL<<GPIO_INPUT_IO_9))
 
   // LEDS
   #define GPIO_OUTPUT_IO_0    GPIO_NUM_18
   #define GPIO_OUTPUT_IO_1    GPIO_NUM_19
   #define GPIO_OUTPUT_IO_2    GPIO_NUM_17
   #define GPIO_OUTPUT_IO_3    GPIO_NUM_16
+  
   #define GPIO_OUTPUT_PIN_SEL  ((1ULL<<GPIO_OUTPUT_IO_0) | (1ULL<<GPIO_OUTPUT_IO_1) | (1ULL<<GPIO_OUTPUT_IO_2) | (1ULL<<GPIO_OUTPUT_IO_3))
   #define ESP_INTR_FLAG_DEFAULT 0
 
@@ -100,12 +110,28 @@ extern "C" {
               
               // check gpio_input for low
               // debounce in pd...
-              if(io_num == GPIO_NUM_23 && gpio_get_level((gpio_num_t)io_num) == 0) {
-                payload = "23";
-              } else if(io_num == GPIO_NUM_1 && gpio_get_level((gpio_num_t)io_num) == 0) {
+              if(io_num == GPIO_NUM_36 && gpio_get_level((gpio_num_t)io_num) == 0) {
+                payload = "0";
+              } else if(io_num == GPIO_NUM_39 && gpio_get_level((gpio_num_t)io_num) == 0) {
                 payload = "1";
+              } else if(io_num == GPIO_NUM_34 && gpio_get_level((gpio_num_t)io_num) == 0) {
+                payload = "2";
+              } else if(io_num == GPIO_NUM_35 && gpio_get_level((gpio_num_t)io_num) == 0) {
+                payload = "3";
+              } else if(io_num == GPIO_NUM_32 && gpio_get_level((gpio_num_t)io_num) == 0) {
+                payload = "4";
+              } else if(io_num == GPIO_NUM_33 && gpio_get_level((gpio_num_t)io_num) == 0) {
+                payload = "5";
+              } else if(io_num == GPIO_NUM_25 && gpio_get_level((gpio_num_t)io_num) == 0) {
+                payload = "6";
+              } else if(io_num == GPIO_NUM_26 && gpio_get_level((gpio_num_t)io_num) == 0) {
+                payload = "7";
+              } else if(io_num == GPIO_NUM_27 && gpio_get_level((gpio_num_t)io_num) == 0) {
+                payload = "8";
+              } else if(io_num == GPIO_NUM_14 && gpio_get_level((gpio_num_t)io_num) == 0) {
+                payload = "9";
               }
-
+              
               int err = sendto(sock, payload, strlen(payload), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
                   if (err < 0) {
                       ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
