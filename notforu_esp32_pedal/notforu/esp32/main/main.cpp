@@ -86,10 +86,10 @@ extern "C" {
   #define GPIO_INPUT_PIN_SEL  ((1ULL<<GPIO_INPUT_IO_0) | (1ULL<<GPIO_INPUT_IO_1) | (1ULL<<GPIO_INPUT_IO_2) | (1ULL<<GPIO_INPUT_IO_3) | (1ULL<<GPIO_INPUT_IO_4) | (1ULL<<GPIO_INPUT_IO_5) | (1ULL<<GPIO_INPUT_IO_6) | (1ULL<<GPIO_INPUT_IO_7) | (1ULL<<GPIO_INPUT_IO_8) | (1ULL<<GPIO_INPUT_IO_9))
 
   // LEDS
-  #define GPIO_OUTPUT_IO_0    GPIO_NUM_18
-  #define GPIO_OUTPUT_IO_1    GPIO_NUM_19
-  #define GPIO_OUTPUT_IO_2    GPIO_NUM_17
-  #define GPIO_OUTPUT_IO_3    GPIO_NUM_16
+  #define GPIO_OUTPUT_IO_0    GPIO_NUM_13
+  #define GPIO_OUTPUT_IO_1    GPIO_NUM_9
+  #define GPIO_OUTPUT_IO_2    GPIO_NUM_10
+  #define GPIO_OUTPUT_IO_3    GPIO_NUM_11
   
   #define GPIO_OUTPUT_PIN_SEL  ((1ULL<<GPIO_OUTPUT_IO_0) | (1ULL<<GPIO_OUTPUT_IO_1) | (1ULL<<GPIO_OUTPUT_IO_2) | (1ULL<<GPIO_OUTPUT_IO_3))
   #define ESP_INTR_FLAG_DEFAULT 0
@@ -131,7 +131,7 @@ extern "C" {
               } else if(io_num == GPIO_NUM_14 && gpio_get_level((gpio_num_t)io_num) == 0) {
                 payload = "9";
               }
-              
+
               int err = sendto(sock, payload, strlen(payload), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
                   if (err < 0) {
                       ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
