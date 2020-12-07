@@ -1,0 +1,68 @@
+#N canvas 900 285 383 509 10;
+#X obj 98 18 midirealtimein;
+#X floatatom 97 41 5 0 0 0 - - -;
+#X obj 98 64 sel 248 250 251 252;
+#X obj 25 118 print pulse;
+#X obj 126 91 print sequencer_start;
+#X obj 153 112 print sequencer_continue;
+#X obj 181 133 print sequencer_stop;
+#X obj 24 143 counter 0 0 5;
+#X obj 24 165 sel 0;
+#X obj 125 159 bng 50 250 50 0 empty empty empty 17 7 0 10 -13381 -262144
+-1;
+#X obj 248 160 bng 50 250 50 0 empty empty empty 17 7 0 10 -258113
+-262144 -1;
+#X obj 186 159 bng 50 250 50 0 empty empty empty 17 7 0 10 -4160 -262144
+-1;
+#X obj 24 187 bng 50 250 50 0 empty empty empty 17 7 0 10 -1 -262144
+-1;
+#X obj 24 306 timer;
+#X obj 24 261 sel 0;
+#X obj 24 243 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X obj 51 281 t b;
+#X obj 24 438 nbx 3 36 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 36
+-262144 -1 -1 0 256;
+#X obj 24 349 /;
+#X obj 24 371 * 60;
+#X msg 24 328 1000 \$1;
+#X text 183 211 continue;
+#X text 245 211 stop;
+#X text 123 211 start;
+#X text 42 239 pulse;
+#X text 151 447 BPM;
+#X obj 24 392 / 4;
+#X obj 24 413 int;
+#X text 68 303 do we need to average?;
+#X obj 268 382 int 1;
+#X obj 314 380 + 1;
+#X obj 329 418 % 5;
+#X floatatom 316 451 5 0 0 0 - - -;
+#X connect 0 0 1 0;
+#X connect 1 0 2 0;
+#X connect 2 0 3 0;
+#X connect 2 0 7 0;
+#X connect 2 0 29 0;
+#X connect 2 1 4 0;
+#X connect 2 1 9 0;
+#X connect 2 2 5 0;
+#X connect 2 2 11 0;
+#X connect 2 3 6 0;
+#X connect 2 3 10 0;
+#X connect 7 0 8 0;
+#X connect 8 0 12 0;
+#X connect 12 0 15 0;
+#X connect 13 0 20 0;
+#X connect 14 0 13 0;
+#X connect 14 1 16 0;
+#X connect 15 0 14 0;
+#X connect 16 0 13 1;
+#X connect 18 0 19 0;
+#X connect 19 0 26 0;
+#X connect 20 0 18 0;
+#X connect 26 0 27 0;
+#X connect 27 0 17 0;
+#X connect 29 0 30 0;
+#X connect 29 0 31 0;
+#X connect 30 0 29 1;
+#X connect 31 0 32 0;
