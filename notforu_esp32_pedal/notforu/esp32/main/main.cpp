@@ -112,20 +112,20 @@ extern "C" {
       uint32_t io_num;
       for(;;) {
           if(xQueueReceive(gpio_evt_queue, &io_num, portMAX_DELAY)) {
-              // check gpio_input for low
-              // debounce in pd...
-              if((io_num == GPIO_NUM_32 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in0) > debounce_us) {
+
+              if((io_num == GPIO_NUM_36 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in0) > debounce_us) {
                 in0 = esp_timer_get_time();
                 payload = "0";
-              } else if((io_num == GPIO_NUM_32 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in1) > debounce_us) {
+                sendto(sock, payload, strlen(payload), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
+              } else if((io_num == GPIO_NUM_39 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in1) > debounce_us) {
                 in1 = esp_timer_get_time();
                 payload = "1";
                 sendto(sock, payload, strlen(payload), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
-              } else if((io_num == GPIO_NUM_32 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in2) > debounce_us) {
+              } else if((io_num == GPIO_NUM_34 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in2) > debounce_us) {
                 in2 = esp_timer_get_time();
                 payload = "2";
                 sendto(sock, payload, strlen(payload), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
-              } else if((io_num == GPIO_NUM_32 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in3) > debounce_us) {
+              } else if((io_num == GPIO_NUM_35 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in3) > debounce_us) {
                 in3 = esp_timer_get_time();
                 payload = "3";
                 sendto(sock, payload, strlen(payload), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
@@ -137,19 +137,19 @@ extern "C" {
                 in5 = esp_timer_get_time();
                 payload = "5";
                 sendto(sock, payload, strlen(payload), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
-              } else if((io_num == GPIO_NUM_32 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in6) > debounce_us) {
+              } else if((io_num == GPIO_NUM_25 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in6) > debounce_us) {
                 in6 = esp_timer_get_time();
                 payload = "6";
                 sendto(sock, payload, strlen(payload), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
-              } else if((io_num == GPIO_NUM_32 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in7) > debounce_us) {
+              } else if((io_num == GPIO_NUM_26 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in7) > debounce_us) {
                 in7 = esp_timer_get_time();
                 payload = "7";
                 sendto(sock, payload, strlen(payload), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
-              } else if((io_num == GPIO_NUM_32 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in8) > debounce_us) {
+              } else if((io_num == GPIO_NUM_27 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in8) > debounce_us) {
                 in8 = esp_timer_get_time();
                 payload = "8";
                 sendto(sock, payload, strlen(payload), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
-              } else if((io_num == GPIO_NUM_32 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in9) > debounce_us) {
+              } else if((io_num == GPIO_NUM_14 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in9) > debounce_us) {
                 in9 = esp_timer_get_time();
                 payload = "9";
                 sendto(sock, payload, strlen(payload), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
