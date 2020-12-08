@@ -1,7 +1,5 @@
 // TODO
-// CHOOSE THE RIGHT GPIO and update
-// CHECK IP ADDRESS...
-// SEND TO PD
+// CHECK IP ADDRESS... (router/not4u)
 // KEEP MIDI UART
 
 #include <ableton/Link.hpp>
@@ -53,7 +51,7 @@ bool startStopState = false;
 double curr_beat_time;
 double prev_beat_time;
 
-unsigned long debounce_us = 1000000; // not a real debounce, just send a quickly as possible and not send the event for X microseconds
+unsigned long debounce_us = 350000; // not a real debounce, just send a quickly as possible and not send the event for X microseconds
 time_t in0;
 time_t in1;
 time_t in2;
@@ -71,7 +69,7 @@ time_t in9;
 extern "C" {
   
   // BUTTONS
-  #define GPIO_INPUT_IO_0     GPIO_NUM_36 // no pull-up
+  #define GPIO_INPUT_IO_0     GPIO_NUM_36 // no internal pull-up
   #define GPIO_INPUT_IO_1     GPIO_NUM_39 // no pull-up
   #define GPIO_INPUT_IO_2     GPIO_NUM_34 // no pull-up
   #define GPIO_INPUT_IO_3     GPIO_NUM_35 // no pull-up
@@ -107,6 +105,7 @@ extern "C" {
       xQueueSendFromISR(gpio_evt_queue, &gpio_num, NULL);
   }
 
+  // interrupt receive button press and send udp
   static void gpio_task_example(void* arg)
   {
       uint32_t io_num;
@@ -313,13 +312,6 @@ static void udp_client_task(void *pvParameters)
 
         while (1) {
 
-            int err = sendto(sock, payload, strlen(payload), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
-            if (err < 0) {
-                ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
-                break;
-            }
-            ESP_LOGI(TAG, "Message sent");
-
             struct sockaddr_in source_addr; // Large enough for both IPv4 or IPv6
             socklen_t socklen = sizeof(source_addr);
             int len = recvfrom(sock, rx_buffer, sizeof(rx_buffer) - 1, 0, (struct sockaddr *)&source_addr, &socklen);
@@ -328,20 +320,47 @@ static void udp_client_task(void *pvParameters)
             if (len < 0) {
                 ESP_LOGE(TAG, "recvfrom failed: errno %d", errno);
                 break;
-            }
-            // Data received
-            else {
+            } else { // Data received
                 rx_buffer[len] = 0; // Null-terminate whatever we received and treat like a string
-                ESP_LOGI(TAG, "Received %d bytes from %s:", len, addr_str);
-                ESP_LOGI(TAG, "%s", rx_buffer);
-                /*if(rx_buffer == 1) {
-                  gpio_set_level(GPIO_OUTPUT_IO_8, 0);
-                } else {
+                //ESP_LOGI(TAG, "Received %d bytes from %s:", len, addr_str);
+                //ESP_LOGI(TAG, "%s", rx_buffer);
+
+                // control leds from pd (udp)
+                
+                if(rx_buffer[0] == '1') { // looper number (exclusive so managed here)
+                  gpio_set_level(GPIO_OUTPUT_IO_4, 1);
+                  gpio_set_level(GPIO_OUTPUT_IO_5, 0);
+                  gpio_set_level(GPIO_OUTPUT_IO_6, 0);
+                  gpio_set_level(GPIO_OUTPUT_IO_7, 0);
+                } else if(rx_buffer[0] == '2') { // looper 2
+                  gpio_set_level(GPIO_OUTPUT_IO_4, 0);
+                  gpio_set_level(GPIO_OUTPUT_IO_5, 1);
+                  gpio_set_level(GPIO_OUTPUT_IO_6, 0);
+                  gpio_set_level(GPIO_OUTPUT_IO_7, 0);
+                } else if(rx_buffer[0] == '3') { // looper 3
+                  gpio_set_level(GPIO_OUTPUT_IO_4, 0);
+                  gpio_set_level(GPIO_OUTPUT_IO_5, 0);
+                  gpio_set_level(GPIO_OUTPUT_IO_6, 1);
+                  gpio_set_level(GPIO_OUTPUT_IO_7, 0);
+                } else if(rx_buffer[0] == '4') { // looper 4
+                  gpio_set_level(GPIO_OUTPUT_IO_4, 0);
+                  gpio_set_level(GPIO_OUTPUT_IO_5, 0);
+                  gpio_set_level(GPIO_OUTPUT_IO_6, 0);
+                  gpio_set_level(GPIO_OUTPUT_IO_7, 1);
+                } else if(rx_buffer[0] == '5') { // LED REC - ON
                   gpio_set_level(GPIO_OUTPUT_IO_8, 1);
-                }*/
+                  gpio_set_level(GPIO_OUTPUT_IO_9, 0);
+                } else if(rx_buffer[0] == '6') { // LED REC - OFF
+                  gpio_set_level(GPIO_OUTPUT_IO_8, 0); 
+                } else if(rx_buffer[0] == '7') { // LED DUB - ON
+                  gpio_set_level(GPIO_OUTPUT_IO_9, 1);
+                  gpio_set_level(GPIO_OUTPUT_IO_8, 0);
+                } else if(rx_buffer[0] == '8') { // LED DUB - OFF
+                  gpio_set_level(GPIO_OUTPUT_IO_9, 0); 
+                }
             }
 
-            vTaskDelay(100 / portTICK_PERIOD_MS);
+            vTaskDelay(500 / portTICK_PERIOD_MS);
         }
 
         if (sock != -1) {
