@@ -1,7 +1,3 @@
-// TODO
-// CHECK IP ADDRESS... (router/not4u)
-// KEEP MIDI UART
-
 #include <ableton/Link.hpp>
 #include <driver/gpio.h>
 #include <driver/timer.h>
@@ -30,7 +26,7 @@
 #include "lwip/sys.h"
 #include <lwip/netdb.h>
 
-#define HOST_IP_ADDR "192.168.2.101"
+#define HOST_IP_ADDR "192.168.2.199" // synth is using a static ip
 #define PORT 3333
 
 static const char *TAG = "example";
@@ -38,7 +34,7 @@ static const char *payload = "Message from ESP32 ";
 
 char rx_buffer[128];
 char addr_str[128];
-int addr_family;
+int addr_family;    
 int ip_protocol;
 struct sockaddr_in dest_addr;
 int sock;
@@ -46,12 +42,12 @@ int sock;
 #define PRINT_LINK_STATE false
 
 // Global
-bool startStopCB = false;
+bool startStopCB = true;
 bool startStopState = false;
 double curr_beat_time;
 double prev_beat_time;
 
-unsigned long debounce_us = 350000; // not a real debounce, just send a quickly as possible and not send the event for X microseconds
+unsigned long debounce_us = 350000; // not a real debounce, just send as quickly as possible and not send the event for X microseconds
 time_t in0;
 time_t in1;
 time_t in2;
@@ -62,15 +58,21 @@ time_t in6;
 time_t in7;
 time_t in8;
 time_t in9;
+time_t in10;
+time_t in11;
 
 
 
 // gpio
 extern "C" {
   
+  // ADC (future implementation) or digital if needed (no pull-up)
+  #define GPIO_ADC_0     GPIO_NUM_36
+  #define GPIO_ADC_1     GPIO_NUM_39
+
   // BUTTONS
-  #define GPIO_INPUT_IO_0     GPIO_NUM_36 // no internal pull-up
-  #define GPIO_INPUT_IO_1     GPIO_NUM_39 // no pull-up
+  #define GPIO_INPUT_IO_0     GPIO_NUM_0 // pullup forced (good)
+  #define GPIO_INPUT_IO_1     GPIO_NUM_2 // connected to led (np)
   #define GPIO_INPUT_IO_2     GPIO_NUM_34 // no pull-up
   #define GPIO_INPUT_IO_3     GPIO_NUM_35 // no pull-up
   #define GPIO_INPUT_IO_4     GPIO_NUM_32
@@ -79,7 +81,10 @@ extern "C" {
   #define GPIO_INPUT_IO_7     GPIO_NUM_26
   #define GPIO_INPUT_IO_8     GPIO_NUM_27
   #define GPIO_INPUT_IO_9     GPIO_NUM_14
-  #define GPIO_INPUT_PIN_SEL  ((1ULL<<GPIO_INPUT_IO_0) | (1ULL<<GPIO_INPUT_IO_1) | (1ULL<<GPIO_INPUT_IO_2) | (1ULL<<GPIO_INPUT_IO_3) | (1ULL<<GPIO_INPUT_IO_4) | (1ULL<<GPIO_INPUT_IO_5) | (1ULL<<GPIO_INPUT_IO_6) | (1ULL<<GPIO_INPUT_IO_7) | (1ULL<<GPIO_INPUT_IO_8) | (1ULL<<GPIO_INPUT_IO_9))
+  #define GPIO_INPUT_IO_10     GPIO_NUM_4
+  #define GPIO_INPUT_IO_11     GPIO_NUM_15
+  #define GPIO_INPUT_PIN_SEL  ((1ULL<<GPIO_INPUT_IO_0) | (1ULL<<GPIO_INPUT_IO_1) | (1ULL<<GPIO_INPUT_IO_2) | (1ULL<<GPIO_INPUT_IO_3) | (1ULL<<GPIO_INPUT_IO_4) | (1ULL<<GPIO_INPUT_IO_5) | (1ULL<<GPIO_INPUT_IO_6) | (1ULL<<GPIO_INPUT_IO_7) | (1ULL<<GPIO_INPUT_IO_8) | (1ULL<<GPIO_INPUT_IO_9) | (1ULL<<GPIO_INPUT_IO_10) | (1ULL<<GPIO_INPUT_IO_11))
+
 
   // LED BEAT
   #define GPIO_OUTPUT_IO_0    GPIO_NUM_13
@@ -112,11 +117,11 @@ extern "C" {
       for(;;) {
           if(xQueueReceive(gpio_evt_queue, &io_num, portMAX_DELAY)) {
 
-              if((io_num == GPIO_NUM_36 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in0) > debounce_us) {
+              if((io_num == GPIO_NUM_0 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in0) > debounce_us) {
                 in0 = esp_timer_get_time();
                 payload = "0";
                 sendto(sock, payload, strlen(payload), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
-              } else if((io_num == GPIO_NUM_39 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in1) > debounce_us) {
+              } else if((io_num == GPIO_NUM_2 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in1) > debounce_us) {
                 in1 = esp_timer_get_time();
                 payload = "1";
                 sendto(sock, payload, strlen(payload), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
@@ -151,6 +156,14 @@ extern "C" {
               } else if((io_num == GPIO_NUM_14 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in9) > debounce_us) {
                 in9 = esp_timer_get_time();
                 payload = "9";
+                sendto(sock, payload, strlen(payload), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
+              } else if((io_num == GPIO_NUM_4 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in10) > debounce_us) {
+                in10 = esp_timer_get_time();
+                payload = "10";
+                sendto(sock, payload, strlen(payload), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
+              } else if((io_num == GPIO_NUM_15 && gpio_get_level((gpio_num_t)io_num) == 0) && (esp_timer_get_time() - in11) > debounce_us) {
+                in11 = esp_timer_get_time();
+                payload = "11";
                 sendto(sock, payload, strlen(payload), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
               }
 
@@ -271,7 +284,7 @@ void tickTask(void* userParam)
       if (prev_phase - curr_phase > 4 / 2 || prev_step != curr_step) {
         
         // only if playing
-        //if(startStopCB) {
+        if(startStopCB) {
         // show step with leds
           if(curr_step == 0) {
             gpio_set_level(GPIO_OUTPUT_IO_0, 1);
@@ -293,7 +306,12 @@ void tickTask(void* userParam)
           } else {
             gpio_set_level(GPIO_OUTPUT_IO_3, 0);
           }
-        //}
+        } else {
+          gpio_set_level(GPIO_OUTPUT_IO_0, 0);
+          gpio_set_level(GPIO_OUTPUT_IO_1, 0);
+          gpio_set_level(GPIO_OUTPUT_IO_2, 0);
+          gpio_set_level(GPIO_OUTPUT_IO_3, 0);
+        }
        
       }
     }
@@ -438,5 +456,7 @@ extern "C" void app_main()
   gpio_isr_handler_add(GPIO_INPUT_IO_7, gpio_isr_handler, (void*) GPIO_INPUT_IO_7);
   gpio_isr_handler_add(GPIO_INPUT_IO_8, gpio_isr_handler, (void*) GPIO_INPUT_IO_8);
   gpio_isr_handler_add(GPIO_INPUT_IO_9, gpio_isr_handler, (void*) GPIO_INPUT_IO_9);
+  gpio_isr_handler_add(GPIO_INPUT_IO_10, gpio_isr_handler, (void*) GPIO_INPUT_IO_10);
+  gpio_isr_handler_add(GPIO_INPUT_IO_11, gpio_isr_handler, (void*) GPIO_INPUT_IO_11);
 
 }
