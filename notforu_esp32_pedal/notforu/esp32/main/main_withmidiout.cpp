@@ -14,7 +14,7 @@
 #include "freertos/queue.h"
 #include <nvs_flash.h>
 #include <protocol_examples_common.h>
-#include "driver/uart.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "esp_timer.h"
@@ -50,6 +50,7 @@ int sock;
 #define PRINT_LINK_STATE false
 
 // Serial midi
+#include "driver/uart.h"
 #define ECHO_TEST_RTS (UART_PIN_NO_CHANGE)
 #define ECHO_TEST_CTS (UART_PIN_NO_CHANGE)
 #define ECHO_TEST_TXD  (GPIO_NUM_4)
@@ -60,9 +61,24 @@ int sock;
 #define MIDI_STOP 0xFC
 #define MIDI_SONG_POSITION_POINTER 0xF2
 
-// Global
 static void periodic_timer_callback(void* arg);
 esp_timer_handle_t periodic_timer;
+
+// callbacks
+void tempoChanged(double tempo) {
+    double midiClockMicroSecond = ((60000 / tempo) / 24) * 1000;
+    esp_timer_handle_t periodic_timer_handle = (esp_timer_handle_t) periodic_timer;
+    ESP_ERROR_CHECK(esp_timer_stop(periodic_timer_handle));
+    ESP_ERROR_CHECK(esp_timer_start_periodic(periodic_timer_handle, midiClockMicroSecond));
+}
+
+static void periodic_timer_callback(void* arg)
+{
+    char zedata[] = { MIDI_TIMING_CLOCK };
+    uart_write_bytes(UART_NUM_1, zedata, 1);
+}
+
+
 bool startStopCB = false;
 bool startStopState = false;
 double curr_beat_time;
@@ -212,13 +228,7 @@ void printTask(void* userParam)
   }
 }
 
-// callbacks
-void tempoChanged(double tempo) {
-    double midiClockMicroSecond = ((60000 / tempo) / 24) * 1000;
-    esp_timer_handle_t periodic_timer_handle = (esp_timer_handle_t) periodic_timer;
-    ESP_ERROR_CHECK(esp_timer_stop(periodic_timer_handle));
-    ESP_ERROR_CHECK(esp_timer_start_periodic(periodic_timer_handle, midiClockMicroSecond));
-}
+
 
 void startStopChanged(bool state) {
   // received as soon as sent
@@ -305,11 +315,6 @@ void tickTask(void* userParam)
   }
 }
 
-static void periodic_timer_callback(void* arg)
-{
-    char zedata[] = { MIDI_TIMING_CLOCK };
-    uart_write_bytes(UART_NUM_1, zedata, 1);
-}
 
 
 
@@ -375,6 +380,14 @@ extern "C" void app_main()
   uart_set_pin(UART_NUM_1, ECHO_TEST_TXD, ECHO_TEST_RXD, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
   uart_driver_install(UART_NUM_1, BUF_SIZE * 2, 0, 0, NULL, 0);
 
+    // midi clock
+  const esp_timer_create_args_t periodic_timer_args = {
+          .callback = &periodic_timer_callback,
+          .name = "periodic"
+  };
+  ESP_ERROR_CHECK(esp_timer_create(&periodic_timer_args, &periodic_timer));
+  ESP_ERROR_CHECK(esp_timer_start_periodic(periodic_timer, 20833.333333333)); // 120 bpm by default
+
   // upd init + timer
   dest_addr.sin_addr.s_addr = inet_addr(HOST_IP_ADDR);
   dest_addr.sin_family = AF_INET;
@@ -394,13 +407,7 @@ extern "C" void app_main()
   timerGroup0Init(1000, tickSemphr);
   xTaskCreate(tickTask, "tick", 8192, tickSemphr, 1, nullptr);
 
-  // midi clock
-  const esp_timer_create_args_t periodic_timer_args = {
-          .callback = &periodic_timer_callback,
-          .name = "periodic"
-  };
-  ESP_ERROR_CHECK(esp_timer_create(&periodic_timer_args, &periodic_timer));
-  ESP_ERROR_CHECK(esp_timer_start_periodic(periodic_timer, 20833.333333333)); // 120 bpm by default
+
 
 
 /*

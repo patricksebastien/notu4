@@ -62,6 +62,36 @@ time_t in10;
 time_t in11;
 
 
+// Serial midi
+#include "driver/uart.h"
+#define ECHO_TEST_RTS (UART_PIN_NO_CHANGE)
+#define ECHO_TEST_CTS (UART_PIN_NO_CHANGE)
+#define ECHO_TEST_TXD  (GPIO_NUM_1)
+#define ECHO_TEST_RXD  (GPIO_NUM_3)
+#define BUF_SIZE (1024)
+#define MIDI_TIMING_CLOCK 0xF8
+#define MIDI_START 0xFA
+#define MIDI_STOP 0xFC
+#define MIDI_SONG_POSITION_POINTER 0xF2
+
+static void periodic_timer_callback(void* arg);
+esp_timer_handle_t periodic_timer;
+
+// callbacks
+void tempoChanged(double tempo) {
+    double midiClockMicroSecond = ((60000 / tempo) / 24) * 1000;
+    esp_timer_handle_t periodic_timer_handle = (esp_timer_handle_t) periodic_timer;
+    ESP_ERROR_CHECK(esp_timer_stop(periodic_timer_handle));
+    ESP_ERROR_CHECK(esp_timer_start_periodic(periodic_timer_handle, midiClockMicroSecond));
+}
+
+static void periodic_timer_callback(void* arg)
+{
+    char zedata[] = { MIDI_TIMING_CLOCK };
+    uart_write_bytes(UART_NUM_1, zedata, 1);
+}
+
+
 
 // gpio
 extern "C" {
@@ -257,6 +287,7 @@ void tickTask(void* userParam)
   link.enableStartStopSync(true); // if not no callback for start/stop
 
   // callbacks
+  link.setTempoCallback(tempoChanged);
   link.setStartStopCallback(startStopChanged);
 
   // debug
@@ -283,6 +314,20 @@ void tickTask(void* userParam)
       const double curr_step = floor(curr_phase * 1);
       if (prev_phase - curr_phase > 4 / 2 || prev_step != curr_step) {
         
+        // midi start / stop
+        if(curr_step == 0 && startStopState != startStopCB) {
+              if(startStopCB) {
+                char zedata[] = { MIDI_START };
+                uart_write_bytes(UART_NUM_1, zedata, 1);
+                uart_write_bytes(UART_NUM_1, 0, 1);
+              } else {
+                char zedata[] = { MIDI_STOP };
+                uart_write_bytes(UART_NUM_1, zedata, 1);
+                uart_write_bytes(UART_NUM_1, 0, 1);
+              }
+              startStopState = startStopCB;
+        }
+
         // only if playing
         if(startStopCB) {
         // show step with leds
@@ -292,9 +337,9 @@ void tickTask(void* userParam)
             gpio_set_level(GPIO_OUTPUT_IO_0, 0);
           }
           if(curr_step == 1) {
-            gpio_set_level(GPIO_OUTPUT_IO_1, 1);
+            gpio_set_level(GPIO_OUTPUT_IO_3, 1);
           } else {
-            gpio_set_level(GPIO_OUTPUT_IO_1, 0);
+            gpio_set_level(GPIO_OUTPUT_IO_3, 0);
           }
           if(curr_step == 2) {
             gpio_set_level(GPIO_OUTPUT_IO_2, 1);
@@ -302,9 +347,9 @@ void tickTask(void* userParam)
             gpio_set_level(GPIO_OUTPUT_IO_2, 0);
           }
           if(curr_step == 3) {
-            gpio_set_level(GPIO_OUTPUT_IO_3, 1);
+            gpio_set_level(GPIO_OUTPUT_IO_1, 1);
           } else {
-            gpio_set_level(GPIO_OUTPUT_IO_3, 0);
+            gpio_set_level(GPIO_OUTPUT_IO_1, 0);
           }
         } else {
           gpio_set_level(GPIO_OUTPUT_IO_0, 0);
@@ -397,6 +442,27 @@ extern "C" void app_main()
   ESP_ERROR_CHECK(esp_event_loop_create_default());
   ESP_ERROR_CHECK(example_connect());
 
+   // serial
+  uart_config_t uart_config = {
+    .baud_rate = 31250, // midi speed
+    .data_bits = UART_DATA_8_BITS,
+    .parity    = UART_PARITY_DISABLE,
+    .stop_bits = UART_STOP_BITS_1,
+    .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+    .rx_flow_ctrl_thresh = 122,
+  };
+  uart_param_config(UART_NUM_1, &uart_config);
+  uart_set_pin(UART_NUM_1, ECHO_TEST_TXD, ECHO_TEST_RXD, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+  uart_driver_install(UART_NUM_1, BUF_SIZE * 2, 0, 0, NULL, 0);
+
+    // midi clock
+  const esp_timer_create_args_t periodic_timer_args = {
+          .callback = &periodic_timer_callback,
+          .name = "periodic"
+  };
+  ESP_ERROR_CHECK(esp_timer_create(&periodic_timer_args, &periodic_timer));
+  ESP_ERROR_CHECK(esp_timer_start_periodic(periodic_timer, 20833.333333333)); // 120 bpm by default
+
   // upd init + timer
   dest_addr.sin_addr.s_addr = inet_addr(HOST_IP_ADDR);
   dest_addr.sin_family = AF_INET;
@@ -446,6 +512,7 @@ extern "C" void app_main()
   //install gpio isr service
   gpio_install_isr_service(ESP_INTR_FLAG_DEFAULT);
   //hook isr handler for specific gpio pin
+  
   gpio_isr_handler_add(GPIO_INPUT_IO_0, gpio_isr_handler, (void*) GPIO_INPUT_IO_0);
   gpio_isr_handler_add(GPIO_INPUT_IO_1, gpio_isr_handler, (void*) GPIO_INPUT_IO_1);
   gpio_isr_handler_add(GPIO_INPUT_IO_2, gpio_isr_handler, (void*) GPIO_INPUT_IO_2);
