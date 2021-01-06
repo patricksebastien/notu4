@@ -18,7 +18,7 @@ If jamming with friends using link then you can sync the looper and synth (ie de
 > Configure as LOOPER1: Utils -> T1 off (or T1 on but no link client - *(saving cpu cycle)*) (tap tempo only for FX)
 
 # FX
-State: FX1 (right on ADC 1 - black is also connected to FX1)
+State: FX1
 
  - P8: Crush wet
  - P7: Crush gain
@@ -61,6 +61,7 @@ State: Mixer
 
 # FOOT controller & synth layout
 
+![Marking](https://github.com/patricksebastien/notu4/blob/main/marking.jpg?raw=true)
 
 # Software
 
