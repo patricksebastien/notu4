@@ -1,9 +1,22 @@
- # Turning on procedure
+# NETWORK
+
+## Wifi
+
+SSID: synthorange
+PWD: synthorange
+
+## IP
+Synth static IP: 192.168.2.199
+Foot controller IP: 192.168.2.DYNAMIC (starting at 100)
+UDP Port: 3333
+Router: 192.168.2.1 - q1w2e3
  
- 1. **Turn on router** located inside the cage and **connect the foot controller** using either the **magnet connector or a micro-usb cable**
- 2. Connect both USB cable (teensy built-in dangling cable) and synth; **KEEP synth OFF while booting**, wait for count-down (1min); connect **USB-C OR battery** located under the synth, use a drill bit or something similar to reach the on state
- 3. Connect wireless audio adaptor or a real audio cable; OPTIONAL: connect a line-in instrument
- 4. Lower the volume slider, turn on the synth slowly raise volume
+# Turning on procedure
+ 
+1. **Turn on router** located inside the cage and **connect the foot controller** using either the **magnet connector or a micro-usb cable**
+2. Connect both USB cable (teensy built-in dangling cable) and synth; **KEEP synth OFF while booting**, wait for count-down (1min); connect **USB-C OR battery** located under the synth, use a drill bit or something similar to reach the on state
+3. Connect wireless audio adaptor or a real audio cable; OPTIONAL: connect a line-in instrument
+4. Lower the volume slider, turn on the synth slowly raise volume
 
 # Turning off procedure
 
@@ -31,8 +44,17 @@ State: FX1
 
 # GENERATOR
 State: Generator
-Turn slowly (loud) P8: wet chaos
-P7: preset
+
+ - P8: chaos wet
+ - P7: chaos preset
+ - P6: lira-8 wet
+ - P5: lira-8 time1
+ - P4: lira-8 time2
+ - P3: lira-8 feedback
+ - P2: lira-8 hold1
+ - P1: lira-8 hold2
+
+ Keys 60-67 Lira-8 sensor
 
 # VOCODER
 
