@@ -56,7 +56,7 @@ Bounce button10 = Bounce(10, 5);
 Bounce button12 = Bounce(12, 5);
 
 // countdown
-#define COUNTDOWN_TIME  60000ul
+#define COUNTDOWN_TIME  48000ul
 
 // n14
 String line1;
@@ -111,7 +111,7 @@ void jasSplash(void) {
   display.setTextSize(6);             // Normal 1:1 pixel scale
   display.setTextColor(SSD1306_WHITE);        // Draw white text
   display.setCursor(0,0);             // Start at top-left corner
-  display.println(F("JAS"));
+  display.println(F("P1"));
   display.display();
   delay(2); // set as long as soft is not ready (20000)?
 }
@@ -315,9 +315,11 @@ void loop() {
         line1 = "Samp-EQ";
         line2 = "";
       } else if(n14 >= 111 && n14 <= 120) {
-        line1 = "Mixer";
+        line1 = "Arp";
         line2 = "";
       } else if(n14 >= 121 && n14 <= 127) {
+        line1 = "Mixer";
+        line2 = "";
       }
     }
     display.clearDisplay();
@@ -375,7 +377,7 @@ void DoCountdown()
         //display.setCursor( 50, 30 );
         display.print( szString );
         display.setCursor(0,36);             // Start at top-left corner
-        display.println("<- OFF");
+        display.println("<-OFF");
 
         display.display();
     }
