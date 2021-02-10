@@ -57,6 +57,7 @@ Bounce button12 = Bounce(12, 5);
 
 // countdown
 #define COUNTDOWN_TIME  48000ul
+//#define COUNTDOWN_TIME  100ul
 
 // n14
 String line1;
@@ -294,17 +295,17 @@ void loop() {
         line1 = "Loop";
         line2 = "4";
       } else if(n14 >= 41 && n14 <= 50) {
-        line1 = "FX";
-        line2 = "1";
+        line1 = "FX1";
+        line2 = "Synth";
       } else if(n14 >= 51 && n14 <= 60) {
-        line1 = "FX";
-        line2 = "2";
+        line1 = "FX2";
+        line2 = "Synth";
       } else if(n14 >= 61 && n14 <= 70) {
-        line1 = "FX";
-        line2 = "3";
+        line1 = "FX1";
+        line2 = "ADC";
       } else if(n14 >= 71 && n14 <= 80) {
-        line1 = "FX";
-        line2 = "4";
+        line1 = "FX2";
+        line2 = "ADC";
       } else if(n14 >= 81 && n14 <= 90) {
         line1 = "Generator";
         line2 = "";
@@ -316,7 +317,7 @@ void loop() {
         line2 = "";
       } else if(n14 >= 111 && n14 <= 120) {
         line1 = "Arp";
-        line2 = "";
+        line2 = "Seq";
       } else if(n14 >= 121 && n14 <= 127) {
         line1 = "Mixer";
         line2 = "";

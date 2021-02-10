@@ -1,0 +1,192 @@
+<!DOCTYPE patchbay>
+<patchbay name="patchbay" version="0.4.2">
+ <output-sockets>
+  <socket type="alsa-midi" client="qmidiarp" name="qmidiarp 1" exclusive="off">
+   <plug>out 1</plug>
+  </socket>
+  <socket type="jack-audio" client="system" name="system" exclusive="off">
+   <plug>capture_1</plug>
+   <plug>capture_2</plug>
+  </socket>
+  <socket type="jack-audio" client="pure_data" name="pd_sooper" exclusive="off">
+   <plug>output2</plug>
+   <plug>output3</plug>
+  </socket>
+  <socket type="jack-audio" client="zynaddsubfx" name="zynaddsubfx 2" exclusive="off">
+   <plug>out_2</plug>
+  </socket>
+  <socket type="jack-audio" client="pure_data" name="pure_data 1" exclusive="off">
+   <plug>output0</plug>
+  </socket>
+  <socket type="jack-audio" client="pure_data" name="pure_data_2_sl_r" exclusive="off">
+   <plug>output5</plug>
+  </socket>
+  <socket type="jack-audio" client="pure_data" name="pure_data_2_sl_l" exclusive="off">
+   <plug>output4</plug>
+  </socket>
+  <socket type="jack-audio" client="pure_data" name="pure_data_r" exclusive="off">
+   <plug>output1</plug>
+  </socket>
+  <socket type="jack-audio" client="pure_data" name="pd_34" exclusive="off">
+   <plug>output2</plug>
+   <plug>output3</plug>
+  </socket>
+  <socket type="jack-audio" client="zynaddsubfx" name="zynaddsubfx 1" exclusive="off">
+   <plug>out_1</plug>
+   <plug>out_2</plug>
+  </socket>
+  <socket type="jack-audio" client="pure_data" name="pure_data" exclusive="off">
+   <plug>output0</plug>
+   <plug>output1</plug>
+  </socket>
+  <socket type="alsa-midi" client="Teensy MIDI" name="Teensy MIDI 1" exclusive="off">
+   <plug>Teensy MIDI MIDI 1</plug>
+  </socket>
+  <socket type="jack-audio" client="phasex" name="phasex" exclusive="off">
+   <plug>out_L</plug>
+   <plug>out_R</plug>
+  </socket>
+  <socket type="alsa-midi" client="Midi Through" name="Midi Through" exclusive="off">
+   <plug>Midi Through Port-0</plug>
+  </socket>
+  <socket type="alsa-midi" client="Keystation 49e" name="Keystation 49e" exclusive="off">
+   <plug>Keystation 49e MIDI 1</plug>
+  </socket>
+  <socket type="alsa-midi" client="Pure Data" name="Pure Data" exclusive="off">
+   <plug>Pure Data Midi-Out 1</plug>
+  </socket>
+  <socket type="jack-audio" client="sooperlooper" name="sooperlooper_outl" exclusive="off">
+   <plug>common_out_1</plug>
+  </socket>
+  <socket type="jack-audio" client="sooperlooper" name="sooperloopero_r" exclusive="off">
+   <plug>common_out_2</plug>
+  </socket>
+ </output-sockets>
+ <input-sockets>
+  <socket type="jack-audio" client="TimeMachine" name="TimeMachine 1" exclusive="off">
+   <plug>in_1</plug>
+   <plug>in_2</plug>
+  </socket>
+  <socket type="jack-audio" client="sooperlooper" name="sooperlooper0_r" exclusive="off">
+   <plug>loop0_in_2</plug>
+  </socket>
+  <socket type="jack-audio" client="sooperlooper" name="sooperlooper1_r" exclusive="off">
+   <plug>loop1_in_2</plug>
+  </socket>
+  <socket type="jack-audio" client="sooperlooper" name="sooperlooper2_r" exclusive="off">
+   <plug>loop2_in_2</plug>
+  </socket>
+  <socket type="jack-audio" client="sooperlooper" name="sooperlooper3_r" exclusive="off">
+   <plug>loop3_in_2</plug>
+  </socket>
+  <socket type="alsa-midi" client="ZynAddSubFX" name="ZynAddSubFX 1" exclusive="off">
+   <plug>ZynAddSubFX</plug>
+  </socket>
+  <socket type="jack-audio" client="sooperlooper" name="sooperlooper 1" exclusive="off">
+   <plug>loop0_in_1</plug>
+  </socket>
+  <socket type="jack-audio" client="sooperlooper" name="sooperlooperloop3" exclusive="off">
+   <plug>loop2_in_1</plug>
+  </socket>
+  <socket type="jack-audio" client="sooperlooper" name="sooperlooperloop4" exclusive="off">
+   <plug>loop3_in_1</plug>
+  </socket>
+  <socket type="jack-audio" client="sooperlooper" name="sooperlooper 3" exclusive="off">
+   <plug>loop1_in_1</plug>
+  </socket>
+  <socket type="jack-audio" client="system" name="system" exclusive="off">
+   <plug>playback_1</plug>
+   <plug>playback_2</plug>
+  </socket>
+  <socket type="jack-audio" client="system" name="system 1" exclusive="off">
+   <plug>playback_1</plug>
+  </socket>
+  <socket type="jack-audio" client="pure_data" name="pure_data5" exclusive="off">
+   <plug>input4</plug>
+  </socket>
+  <socket type="jack-audio" client="pure_data" name="pure_data6" exclusive="off">
+   <plug>input5</plug>
+  </socket>
+  <socket type="jack-audio" client="system" name="system 2" exclusive="off">
+   <plug>playback_2</plug>
+  </socket>
+  <socket type="jack-audio" client="pure_data" name="pure_data4" exclusive="off">
+   <plug>input3</plug>
+  </socket>
+  <socket type="jack-audio" client="sooperlooper" name="sooperlooper" exclusive="off">
+   <plug>common_in_1</plug>
+   <plug>common_in_2</plug>
+   <plug>loop0_in_1</plug>
+   <plug>loop0_in_2</plug>
+  </socket>
+  <socket type="jack-audio" client="pure_data" name="pure_data" exclusive="off">
+   <plug>input0</plug>
+   <plug>input1</plug>
+  </socket>
+  <socket type="jack-audio" client="pure_data" name="pure_data-vocosynth" exclusive="off">
+   <plug>input1</plug>
+  </socket>
+  <socket type="jack-audio" client="pure_data" name="pdadc3" exclusive="off">
+   <plug>input2</plug>
+  </socket>
+  <socket type="alsa-midi" client="Pure Data" name="Pure Data 1" exclusive="off">
+   <plug>Pure Data Midi-In 1</plug>
+  </socket>
+  <socket type="alsa-midi" client="qmidiarp" name="qmidiarp 1" exclusive="off">
+   <plug>in</plug>
+  </socket>
+  <socket type="jack-audio" client="phasex" name="phasex" exclusive="off">
+   <plug>in_1</plug>
+   <plug>in_2</plug>
+  </socket>
+  <socket type="jack-audio" client="pure_data" name="pure_data 2" exclusive="off">
+   <plug>input1</plug>
+  </socket>
+  <socket type="alsa-midi" client="Midi Through" name="Midi Through" exclusive="off">
+   <plug>Midi Through Port-0</plug>
+  </socket>
+  <socket type="alsa-midi" client="Keystation 49e" name="Keystation 49e" exclusive="off">
+   <plug>Keystation 49e MIDI 1</plug>
+  </socket>
+  <socket type="alsa-midi" client="sooperlooper" name="sooperlooper" exclusive="off">
+   <plug>sooperlooper</plug>
+  </socket>
+  <socket type="jack-audio" client="sooperlooper" name="sooperlooper 2" exclusive="off">
+   <plug>loop1_in_1</plug>
+  </socket>
+  <socket type="alsa-midi" client="Pure Data" name="Pure Data" exclusive="off">
+   <plug>Pure Data Midi-In 1</plug>
+  </socket>
+  <socket type="alsa-midi" client="phasex" name="phasex" exclusive="off">
+   <plug>phasex in</plug>
+  </socket>
+ </input-sockets>
+ <slots/>
+ <cables>
+  <cable type="alsa-midi" output="qmidiarp 1" input="Pure Data 1"/>
+  <cable type="jack-audio" output="system" input="phasex"/>
+  <cable type="jack-audio" output="pd_sooper" input="TimeMachine 1"/>
+  <cable type="jack-audio" output="zynaddsubfx 2" input="pure_data4"/>
+  <cable type="jack-audio" output="pure_data_2_sl_r" input="sooperlooper0_r"/>
+  <cable type="jack-audio" output="pure_data_2_sl_r" input="sooperlooper1_r"/>
+  <cable type="jack-audio" output="pure_data_2_sl_r" input="sooperlooper2_r"/>
+  <cable type="jack-audio" output="pure_data_2_sl_r" input="sooperlooper3_r"/>
+  <cable type="jack-audio" output="pure_data_2_sl_l" input="sooperlooper 1"/>
+  <cable type="jack-audio" output="pure_data_2_sl_l" input="sooperlooperloop3"/>
+  <cable type="jack-audio" output="pure_data_2_sl_l" input="sooperlooperloop4"/>
+  <cable type="jack-audio" output="pure_data_2_sl_l" input="sooperlooper 3"/>
+  <cable type="jack-audio" output="pd_34" input="system"/>
+  <cable type="jack-audio" output="zynaddsubfx 1" input="pdadc3"/>
+  <cable type="jack-audio" output="pure_data" input="system"/>
+  <cable type="jack-audio" output="pure_data" input="TimeMachine 1"/>
+  <cable type="alsa-midi" output="Teensy MIDI 1" input="Pure Data 1"/>
+  <cable type="jack-audio" output="phasex" input="pure_data 2"/>
+  <cable type="alsa-midi" output="Keystation 49e" input="phasex"/>
+  <cable type="alsa-midi" output="Keystation 49e" input="qmidiarp 1"/>
+  <cable type="alsa-midi" output="Keystation 49e" input="Pure Data 1"/>
+  <cable type="alsa-midi" output="Pure Data" input="ZynAddSubFX 1"/>
+  <cable type="jack-audio" output="sooperlooper_outl" input="pure_data5"/>
+  <cable type="jack-audio" output="sooperloopero_r" input="pure_data6"/>
+ </cables>
+</patchbay>
+
