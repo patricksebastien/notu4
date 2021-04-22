@@ -52,7 +52,7 @@ Using the looper for ADC1 or ADC2:
 
 # FX
 
-State: FX1
+State: FX1 Synth / FX2 ADC
 
  - P8: Crush wet
  - P7: Crush gain
@@ -60,9 +60,19 @@ State: FX1
  - P5: Echo delay time (can be sync with tap tempo)
  - P4: Reverb wet (T1 on = freeze)
  - P3: Reverb room
- - P2: NA
- - P1: NA
+ - P2: BufferFX web
+ - P1: BufferFX x
 
+State: FX2 Synth / FX2 ADC
+
+ - P8: Granule wet
+ - P7: Granule feedback
+ - P6: Filter web
+ - P5: Filter cutoff
+ - P4: Delay reverse wet
+ - P3: Delay reverse cutoff
+ - P2: Ceff wet
+ - P1: Disto amount
 
 # GENERATOR
 
