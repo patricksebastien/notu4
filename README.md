@@ -1,9 +1,9 @@
 # NETWORK
 
-## Wifi
+## Wifi (for link & foot controller)
 
 SSID: synthorange
-PWD: synthorange
+PWD: synthorange 
 
 ## IP
 
@@ -15,7 +15,7 @@ Router: 192.168.2.1 - q1w2e3
 # ON PROCEDURE
  
 1. **Turn on router** located inside the cage and **connect the foot controller** using either the **magnet connector or a micro-usb cable** (battery run time is ~40h)
-2. Connect both USB cable (teensy built-in dangling cable) and synth; **KEEP synth OFF while booting**, wait for count-down (1min); connect **USB-C OR battery** (battery run time ~12h) located under the synth, use a drill bit or something similar to reach the on state
+2. Connect both USB cable (teensy built-in dangling cable) and synth; do not connect ethernet cable **KEEP synth OFF while booting**, wait for count-down (1min); connect **USB-C OR battery** (battery run time ~12h) located under the synth, use a drill bit or something similar to reach the on state
 3. Connect wireless audio adaptor or a real audio cable; OPTIONAL: connect a line-in instrument
 4. Lower the volume slider, turn on the synth slowly raise volume
 
