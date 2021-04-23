@@ -7,10 +7,10 @@ PWD: synthorange
 
 ## IP
 
-Synth static IP: 192.168.2.199
-Foot controller IP: 192.168.2.DYNAMIC (starting at 100)
+Synth static IP: 192.168.43.199
+Foot controller IP: 192.168.43.DYNAMIC (starting at 100)
 UDP Port: 3333
-Router: 192.168.2.1 - q1w2e3
+Router: 192.168.43.1 - q1w2e3
  
 # ON PROCEDURE
  
@@ -143,6 +143,6 @@ The dangling USB cable is connected to the teensy located inside the synth, you 
 ## ESP32 (for foot controller and midi sync out)
 
 *Tested with esp-idf [v4.0-1](https://github.com/espressif/esp-idf/releases/tag/v4.0-rc)*
-Acting only like a Ableton Link client (cannot send tempo or start-stop) instead use a phone (Link to Midi Bridge) or Bitwig or get a friend. Open notforu_esp32_pedal/notforu/esp32 and do the usual idf build && flash.
+Acting only like a Ableton Link client (cannot send tempo or start-stop) instead use a phone (Link to Midi Bridge) or Bitwig or get a friend. Open notforu_esp32_pedal/notforu/esp32 and do the usual: source /home/psc/esp-idf/export.sh & idf.py build && idf.py -p /dev/ttyUSB0 flash (check cable if not listed)
 
-The network is as follow: UDP client from esp32 sending to a static IP 192.168.2.199 (linux running in khadas (inside the synth) hardware is configured as static IP). ESP32 is listening on a dynamic port (sent to pd when thew first byte is received in pd). Only use to turn on/off leds.
+The network is as follow: UDP client from esp32 sending to a static IP 192.168.43.199 (linux running in khadas (inside the synth) hardware is configured as static IP). ESP32 is listening on a dynamic port (sent to pd when thew first byte is received in pd). Only use to turn on/off leds.
