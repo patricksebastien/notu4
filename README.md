@@ -1,21 +1,23 @@
 # NETWORK
 
-## Wifi
+## Wifi (for link & foot controller)
 
-SSID: synthorange
-PWD: synthorange
+- SSID: synthorange
+- PWD: synthorange 
+
+If jamming on battery, use a phone to create a mobile hotspot instead of connecting to the router inside the box. Use the same SSID & PWD. Android IP range is hardcorded to 192.168.43.x.
 
 ## IP
 
-Synth static IP: 192.168.2.199
-Foot controller IP: 192.168.2.DYNAMIC (starting at 100)
+Synth static IP: 192.168.43.199
+Foot controller IP: 192.168.43.DYNAMIC (starting at 100)
 UDP Port: 3333
-Router: 192.168.2.1 - q1w2e3
+Router: 192.168.43.1 - q1w2e3
  
 # ON PROCEDURE
  
-1. **Turn on router** located inside the cage and **connect the foot controller** using either the **magnet connector or a micro-usb cable** (battery run time is ~40h)
-2. Connect both USB cable (teensy built-in dangling cable) and synth; **KEEP synth OFF while booting**, wait for count-down (1min); connect **USB-C OR battery** (battery run time ~12h) located under the synth, use a drill bit or something similar to reach the on state
+1. **Turn on router** located inside the box and **connect the foot controller** using either the **magnet connector or a micro-usb cable** (battery run time is ~40h)
+2. Connect both USB cable (teensy built-in dangling cable) and synth; do not connect ethernet cable **KEEP synth OFF while booting**, wait for count-down (1min); connect **USB-C OR battery** (battery run time ~12h) located under the synth, use a drill bit or something similar to reach the on state
 3. Connect wireless audio adaptor or a real audio cable; OPTIONAL: connect a line-in instrument
 4. Lower the volume slider, turn on the synth slowly raise volume
 
@@ -52,7 +54,7 @@ Using the looper for ADC1 or ADC2:
 
 # FX
 
-State: FX1
+State: FX1 Synth / FX2 ADC
 
  - P8: Crush wet
  - P7: Crush gain
@@ -60,9 +62,19 @@ State: FX1
  - P5: Echo delay time (can be sync with tap tempo)
  - P4: Reverb wet (T1 on = freeze)
  - P3: Reverb room
- - P2: NA
- - P1: NA
+ - P2: BufferFX web
+ - P1: BufferFX x
 
+State: FX2 Synth / FX2 ADC
+
+ - P8: Granule wet
+ - P7: Granule feedback
+ - P6: Filter web
+ - P5: Filter cutoff
+ - P4: Delay reverse wet
+ - P3: Delay reverse cutoff
+ - P2: Ceff wet
+ - P1: Disto amount
 
 # GENERATOR
 
@@ -133,6 +145,6 @@ The dangling USB cable is connected to the teensy located inside the synth, you 
 ## ESP32 (for foot controller and midi sync out)
 
 *Tested with esp-idf [v4.0-1](https://github.com/espressif/esp-idf/releases/tag/v4.0-rc)*
-Acting only like a Ableton Link client (cannot send tempo or start-stop) instead use a phone (Link to Midi Bridge) or Bitwig or get a friend. Open notforu_esp32_pedal/notforu/esp32 and do the usual idf build && flash.
+Acting only like a Ableton Link client (cannot send tempo or start-stop) instead use a phone (Link to Midi Bridge) or Bitwig or get a friend. Open notforu_esp32_pedal/notforu/esp32 and do the usual: source /home/psc/esp-idf/export.sh & idf.py build && idf.py -p /dev/ttyUSB0 flash (check cable if not listed)
 
-The network is as follow: UDP client from esp32 sending to a static IP 192.168.2.199 (linux running in khadas (inside the synth) hardware is configured as static IP). ESP32 is listening on a dynamic port (sent to pd when thew first byte is received in pd). Only use to turn on/off leds.
+The network is as follow: UDP client from esp32 sending to a static IP 192.168.43.199 (linux running in khadas (inside the synth) hardware is configured as static IP). ESP32 is listening on a dynamic port (sent to pd when thew first byte is received in pd). Only use to turn on/off leds.
