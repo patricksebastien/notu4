@@ -26,7 +26,7 @@
 #include "lwip/sys.h"
 #include <lwip/netdb.h>
 
-#define HOST_IP_ADDR "192.168.2.199" // synth is using a static ip
+#define HOST_IP_ADDR "192.168.43.199" // synth is using a static ip
 #define PORT 3333
 
 static const char *TAG = "example";

@@ -36,10 +36,10 @@ If jamming with friends using link then you can sync the looper and synth (ie de
 Using a custom throat microphone, you can configure the synth as a vocoder (without any feedback). You can use a 1/4" splitter to get 2 mono signals (**black is ADC1 (T3 on), red is ADC2 (T4 on)**).
 
  1. Connect the throat microphone (turn on the switch on the PCB)
- 2. Test if mic is working: T5 on (zyn) & T3 on (adc 1) - turn T3 off after test
+ 2. Test if mic is working: T3 on (adc 1) - turn T3 off after test
  3. Turn on vocoder: Mixer -> T1 on
- 4. Choose a zyn preset that works well with a vocoder (the default preset is bad for vocoding)
- 5. You can let T5 on if you want to ear the synth with the vocoder or turn it off for vocoder only
+ 4. Choose a zyn preset that works well with a vocoder
+ 5. You can let T5 (Zyn) on if you want to ear the synth with the vocoder or turn it off for vocoder only, same for T3. Best sound when T5 and T3 off.
 
 
 # LOOPER
